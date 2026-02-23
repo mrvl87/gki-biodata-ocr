@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Save, Sparkles, User, UserPlus, Trash2, Info, CheckCircle2, AlertTriangle, Plus, Loader2 } from "lucide-react";
+import { Save, Sparkles, User, UserPlus, Trash2, Info, CheckCircle2, AlertTriangle, Plus, Loader2, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -159,6 +159,36 @@ export default function ReviewPage({ params }: { params: { keluarga_id: string }
         }
     };
 
+    const handleFollowUp = async () => {
+        try {
+            setSaving(true);
+            const res = await fetch(`/api/families/${keluarga_id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    keluarga: {
+                        nama_kepala_keluarga: keluarga?.nama_kepala_keluarga,
+                        jemaat: keluarga?.jemaat,
+                        klasis: keluarga?.klasis,
+                        alamat: keluarga?.alamat,
+                        provinsi: keluarga?.provinsi,
+                        kab_kota: keluarga?.kab_kota,
+                        telepon: keluarga?.telepon,
+                    },
+                    anggota: anggota,
+                    action: 'followup'
+                })
+            });
+            if (!res.ok) throw new Error("Gagal menandai follow-up");
+            showToast("Data ditandai untuk tinjau ulang");
+            router.push("/data?followup=true");
+        } catch (err: any) {
+            showToast(err.message, 'error');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const handleDeleteAnggota = async (anggotaId: string) => {
         try {
             setDeleting(anggotaId);
@@ -222,7 +252,7 @@ export default function ReviewPage({ params }: { params: { keluarga_id: string }
         const flagged = isFlagged(person, fieldKey);
         return (
             <div className="space-y-1">
-                <label className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <label className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                     {label}
                     {flagged && <AlertTriangle className="h-3 w-3 text-amber-500" />}
                     {!flagged && value && <CheckCircle2 className="h-3 w-3 text-emerald-400" />}
@@ -231,7 +261,7 @@ export default function ReviewPage({ params }: { params: { keluarga_id: string }
                     type={type}
                     value={value ?? ""}
                     onChange={(e) => updateAnggotaField(idx, fieldKey, e.target.value)}
-                    className={`h-8 text-sm rounded-lg ${flagged ? 'border-amber-400 bg-amber-50/50 focus-visible:ring-amber-300' : 'border-slate-200'}`}
+                    className={`h-8 text-sm rounded-lg uppercase ${flagged ? 'border-amber-400 bg-amber-50/50 focus-visible:ring-amber-300' : 'border-border'}`}
                 />
             </div>
         );
@@ -258,7 +288,7 @@ export default function ReviewPage({ params }: { params: { keluarga_id: string }
                 <select
                     value={value ?? ""}
                     onChange={(e) => updateAnggotaField(idx, fieldKey, e.target.value ? Number(e.target.value) : null)}
-                    className={`flex h-8 w-full rounded-lg border bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${flagged ? 'border-amber-400 bg-amber-50/50 focus-visible:ring-amber-300' : 'border-border'}`}
+                    className={`flex h-8 w-full rounded-lg border bg-background px-2 py-1 text-sm uppercase ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${flagged ? 'border-amber-400 bg-amber-50/50 focus-visible:ring-amber-300' : 'border-border'}`}
                 >
                     <option value="">— Pilih —</option>
                     {Object.entries(options).map(([code, desc]) => (
@@ -318,6 +348,10 @@ export default function ReviewPage({ params }: { params: { keluarga_id: string }
                     </Button>
                     <Button onClick={handleSaveDraft} disabled={saving} variant="outline" size="sm" className="rounded-full text-xs">
                         Simpan Draft
+                    </Button>
+                    <Button onClick={handleFollowUp} disabled={saving} size="sm" variant="outline" className="rounded-full text-xs gap-1 border-indigo-300 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-700 dark:text-indigo-400 dark:hover:bg-indigo-900/20">
+                        <Bookmark className="w-3.5 h-3.5" />
+                        Tinjau Ulang
                     </Button>
                     <Button onClick={handleSave} disabled={saving} size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-xs gap-1 px-5">
                         {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}

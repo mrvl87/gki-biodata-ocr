@@ -112,6 +112,16 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             }
         }
 
+        // Action: mark as needs follow-up (partial verification)
+        if (action === 'followup') {
+            const { error } = await supabase
+                .from('ocr_keluarga')
+                .update({ status: 'needs_followup', updated_at: new Date().toISOString() })
+                .eq('id', params.id)
+            if (error) throw error
+            // Note: Church IDs are NOT generated — only on full confirm
+        }
+
         return NextResponse.json({ success: true })
     } catch (err: any) {
         return NextResponse.json({ error: err.message }, { status: 500 })

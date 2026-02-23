@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Search, Database, Pencil, Trash2, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
+import { Search, Database, Pencil, Trash2, CheckCircle2, AlertTriangle, Loader2, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/shared/StatusBadge";
@@ -62,6 +62,7 @@ export default function DataPage() {
     const statCounts = {
         all: families.length,
         pending: families.filter(f => f.status === 'pending_review').length,
+        followup: families.filter(f => f.status === 'needs_followup').length,
         confirmed: families.filter(f => f.status === 'confirmed').length,
     };
 
@@ -79,10 +80,11 @@ export default function DataPage() {
 
             <main className="flex-1 p-6 max-w-5xl mx-auto w-full space-y-5">
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-4 gap-3">
                     {[
                         { label: "Total", count: statCounts.all, color: "bg-muted text-foreground", filter: "" },
                         { label: "Perlu Review", count: statCounts.pending, color: "bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300", filter: "pending_review" },
+                        { label: "Tinjau Ulang", count: statCounts.followup, color: "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300", filter: "needs_followup" },
                         { label: "Terkonfirmasi", count: statCounts.confirmed, color: "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-300", filter: "confirmed" },
                     ].map(s => (
                         <button
@@ -134,15 +136,19 @@ export default function DataPage() {
                                 <div className="flex items-center gap-4">
                                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${f.status === 'confirmed'
                                         ? 'bg-emerald-50 dark:bg-emerald-900/20'
-                                        : 'bg-amber-50 dark:bg-amber-900/20'
+                                        : f.status === 'needs_followup'
+                                            ? 'bg-indigo-50 dark:bg-indigo-900/20'
+                                            : 'bg-amber-50 dark:bg-amber-900/20'
                                         }`}>
                                         {f.status === 'confirmed'
                                             ? <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                                            : <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                                            : f.status === 'needs_followup'
+                                                ? <Bookmark className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                                                : <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                                         }
                                     </div>
                                     <div>
-                                        <p className="font-bold text-foreground">{f.nama_kepala_keluarga}</p>
+                                        <p className="font-bold text-foreground uppercase">{f.nama_kepala_keluarga}</p>
                                         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                                             <span>{f.jemaat || "—"}</span>
                                             <span>·</span>
