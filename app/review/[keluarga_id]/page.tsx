@@ -2,10 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Save, Sparkles, User, UserPlus, Trash2, Info, CheckCircle2, AlertTriangle, Plus, Loader2 } from "lucide-react";
+import { Save, Sparkles, User, UserPlus, Trash2, Info, CheckCircle2, AlertTriangle, Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { CODE_MAPS, decodeLabel } from "@/lib/codeMaps";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -257,7 +258,7 @@ export default function ReviewPage({ params }: { params: { keluarga_id: string }
                 <select
                     value={value ?? ""}
                     onChange={(e) => updateAnggotaField(idx, fieldKey, e.target.value ? Number(e.target.value) : null)}
-                    className={`flex h-8 w-full rounded-lg border bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${flagged ? 'border-amber-400 bg-amber-50/50 focus-visible:ring-amber-300' : 'border-slate-200'}`}
+                    className={`flex h-8 w-full rounded-lg border bg-background px-2 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${flagged ? 'border-amber-400 bg-amber-50/50 focus-visible:ring-amber-300' : 'border-border'}`}
                 >
                     <option value="">— Pilih —</option>
                     {Object.entries(options).map(([code, desc]) => (
@@ -270,31 +271,25 @@ export default function ReviewPage({ params }: { params: { keluarga_id: string }
 
     // --- Render ---
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="min-h-screen flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
                 <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                <p className="font-bold text-slate-400 uppercase tracking-widest text-xs">Memuat Data...</p>
+                <p className="font-bold text-muted-foreground uppercase tracking-widest text-xs">Memuat Data...</p>
             </div>
         </div>
     );
 
     if (!keluarga) return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="min-h-screen flex items-center justify-center">
             <div className="text-center space-y-4">
-                <p className="text-slate-500 font-medium">Data keluarga tidak ditemukan</p>
+                <p className="text-muted-foreground font-medium">Data keluarga tidak ditemukan</p>
                 <Link href="/data"><Button variant="outline" className="rounded-full">Kembali</Button></Link>
             </div>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col relative overflow-hidden">
-            {/* Background */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-100/20 rounded-full blur-[100px]" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-100/20 rounded-full blur-[100px]" />
-            </div>
-
+        <div className="min-h-screen flex flex-col">
             {/* Toast */}
             <AnimatePresence>
                 {toast && (
@@ -310,48 +305,39 @@ export default function ReviewPage({ params }: { params: { keluarga_id: string }
                 )}
             </AnimatePresence>
 
-            {/* Header */}
-            <header className="sticky top-0 z-50 w-full bg-slate-900 py-3 px-6 md:px-10 flex items-center justify-between border-b border-white/10">
-                <div className="flex items-center gap-4">
-                    <Link href="/data">
-                        <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 rounded-full">
-                            <ArrowLeft className="w-5 h-5" />
-                        </Button>
-                    </Link>
-                    <div className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-amber-400" />
-                        <h1 className="text-lg font-black text-white tracking-tight">Review Data</h1>
-                    </div>
-                    <Badge variant="outline" className="text-slate-300 border-slate-600 bg-slate-800 text-xs rounded-full hidden sm:block">
-                        {keluarga.status === 'confirmed' ? '✓ Terkonfirmasi' : '⏳ Perlu Review'}
-                    </Badge>
+            {/* Page Header */}
+            <div className="border-b border-border px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <Sparkles className="w-5 h-5 text-secondary" />
+                    <h1 className="text-lg font-bold text-foreground tracking-tight">Review Data</h1>
+                    <StatusBadge status={keluarga.status} />
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button onClick={handleDeleteFamily} variant="ghost" size="sm" className="text-red-400 hover:bg-red-500/10 rounded-full text-xs gap-1">
+                    <Button onClick={handleDeleteFamily} variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 rounded-full text-xs gap-1">
                         <Trash2 className="w-3.5 h-3.5" /> Hapus
                     </Button>
-                    <Button onClick={handleSaveDraft} disabled={saving} variant="outline" size="sm" className="rounded-full text-xs border-slate-600 text-slate-300 hover:bg-slate-800">
+                    <Button onClick={handleSaveDraft} disabled={saving} variant="outline" size="sm" className="rounded-full text-xs">
                         Simpan Draft
                     </Button>
-                    <Button onClick={handleSave} disabled={saving} size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-xs gap-1 px-5 shadow-lg shadow-emerald-500/20">
+                    <Button onClick={handleSave} disabled={saving} size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-full text-xs gap-1 px-5">
                         {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                         Konfirmasi
                     </Button>
                 </div>
-            </header>
+            </div>
 
-            <main className="flex-1 container mx-auto p-4 md:p-8 max-w-6xl">
+            <main className="flex-1 p-6 max-w-6xl mx-auto w-full">
                 <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="grid lg:grid-cols-3 gap-6">
 
                     {/* Left: Scan Preview */}
                     <div className="lg:col-span-1 space-y-4">
-                        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 space-y-4">
+                        <div className="surface-raised rounded-2xl p-6 shadow-sm border border-border space-y-4">
                             <div className="flex items-center gap-2">
-                                <Info className="w-4 h-4 text-slate-400" />
-                                <h3 className="font-bold text-slate-700 text-sm">Scan Asli</h3>
+                                <Info className="w-4 h-4 text-muted-foreground" />
+                                <h3 className="font-bold text-foreground text-sm">Scan Asli</h3>
                             </div>
                             {keluarga.scan_url_full && (
-                                <img src={keluarga.scan_url_full} alt="Scan" className="rounded-xl border border-slate-200 shadow-sm w-full hover:scale-105 transition-transform cursor-zoom-in" />
+                                <img src={keluarga.scan_url_full} alt="Scan" className="rounded-xl border border-border shadow-sm w-full hover:scale-105 transition-transform cursor-zoom-in" />
                             )}
                             <div className="space-y-2 text-xs">
                                 <div className="flex justify-between">

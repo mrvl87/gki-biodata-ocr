@@ -4,65 +4,67 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
-
+    /* --- Surfaces --- */
+    --background: 0 0% 98%;
+    --foreground: 224 15% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 224 15% 12%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 224 15% 12%;
 
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
+    /* --- Brand --- */
+    --primary: 224 64% 22%;
+    /* deep navy */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 40 96% 52%;
+    /* warm amber */
+    --secondary-foreground: 224 15% 12%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* --- UI States --- */
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 40 96% 52%;
+    --accent-foreground: 224 15% 12%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* --- Structure --- */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 224 64% 22%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* --- Custom tokens --- */
+    --surface-raised: 0 0% 100%;
+    --surface-overlay: 220 14% 97%;
+    --sidebar-width: 16rem;
+    --sidebar-collapsed: 4rem;
+    --header-height: 3.5rem;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-
-    --radius: 0.75rem;
+    --radius: 0.625rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background: 224 20% 9%;
+    --foreground: 220 14% 92%;
+    --card: 224 18% 12%;
+    --card-foreground: 220 14% 92%;
+    --popover: 224 18% 12%;
+    --popover-foreground: 220 14% 92%;
+    --primary: 214 80% 60%;
+    --primary-foreground: 224 20% 9%;
+    --secondary: 40 80% 52%;
+    --secondary-foreground: 224 20% 9%;
+    --muted: 224 16% 16%;
+    --muted-foreground: 220 9% 56%;
+    --accent: 40 80% 52%;
+    --accent-foreground: 224 20% 9%;
+    --destructive: 0 62% 58%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 224 16% 20%;
+    --input: 224 16% 20%;
+    --ring: 214 80% 60%;
+    --surface-raised: 224 18% 14%;
+    --surface-overlay: 224 18% 13%;
   }
 }
 
@@ -70,34 +72,37 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/30;
+  }
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-xl;
-  }
-  
-  .glass-dark {
-    @apply bg-black/50 backdrop-blur-md border border-white/10 shadow-2xl;
+  .surface-raised {
+    background-color: hsl(var(--surface-raised));
   }
 
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 font-bold;
-  }
-
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient 8s ease infinite;
-  }
-
-  @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  .surface-overlay {
+    background-color: hsl(var(--surface-overlay));
   }
 }
-
