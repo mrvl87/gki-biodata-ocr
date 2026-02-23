@@ -63,6 +63,19 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         if (anggotaUpdates && Array.isArray(anggotaUpdates)) {
             for (const a of anggotaUpdates) {
                 const { id, keluarga_id, created_at, updated_at, id_gereja, ...updateData } = a
+
+                // Sanitize: convert empty strings to null for date/numeric fields
+                const dateFields = ['tanggal_lahir', 'tgl_nikah']
+                const numericFields = ['jenis_kelamin', 'golongan_darah', 'jabatan_jemaat', 'status_baptis', 'status_sidi', 'status_pernikahan', 'status_hub_keluarga', 'pendidikan_terakhir', 'pekerjaan', 'intra', 'status_domisili', 'no_urut']
+                for (const key of Object.keys(updateData)) {
+                    if (dateFields.includes(key) && (updateData[key] === '' || updateData[key] === undefined)) {
+                        updateData[key] = null
+                    }
+                    if (numericFields.includes(key) && (updateData[key] === '' || updateData[key] === undefined)) {
+                        updateData[key] = null
+                    }
+                }
+
                 const { error: aError } = await supabase
                     .from('ocr_anggota_keluarga')
                     .update({
