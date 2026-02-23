@@ -508,6 +508,22 @@ export default function ReviewPage({ params }: { params: { keluarga_id: string }
                                                     className="border-t border-slate-100"
                                                 >
                                                     <div className="p-5 space-y-4">
+                                                        {/* Church ID Banner */}
+                                                        {person.id_gereja ? (
+                                                            <div className="flex items-center gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl px-4 py-3">
+                                                                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                                                <div>
+                                                                    <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">ID Gereja</p>
+                                                                    <p className="text-sm font-mono font-bold text-emerald-800 dark:text-emerald-300 tracking-wider">{person.id_gereja}</p>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex items-center gap-2 bg-muted rounded-xl px-4 py-2.5 text-xs text-muted-foreground">
+                                                                <Info className="w-3.5 h-3.5 shrink-0" />
+                                                                <span>ID Gereja akan otomatis dibuat saat data dikonfirmasi</span>
+                                                            </div>
+                                                        )}
+
                                                         {/* Row 1: Identity */}
                                                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                                                             {renderField("Nama Lengkap", "nama_lengkap", person.nama_lengkap, person, idx)}
