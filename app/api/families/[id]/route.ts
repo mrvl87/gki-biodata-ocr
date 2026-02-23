@@ -62,7 +62,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         // Update anggota iteratively
         if (anggotaUpdates && Array.isArray(anggotaUpdates)) {
             for (const a of anggotaUpdates) {
-                const { id, keluarga_id, created_at, updated_at, ...updateData } = a
+                const { id, keluarga_id, created_at, updated_at, id_gereja, ...updateData } = a
                 const { error: aError } = await supabase
                     .from('ocr_anggota_keluarga')
                     .update({
